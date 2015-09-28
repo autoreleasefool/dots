@@ -1,7 +1,26 @@
 /*
- * Joseph Roque 	7284039
- * Matt L'Arrivee 	6657183
- * 
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Joseph Roque, Matthew L'Arrivee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
  */
 
 package roquelarrivee.dots;
@@ -22,10 +41,10 @@ import ocsf.server.ConnectionToClient;
  * @author Matthew L'Arrivee
  */
 public class GameServer extends AbstractServer {
-	
+
 	/**Final string which represents login info in the ConnectionToClient hashmap*/
 	final public static String LOGIN_ID = "loginID";
-	
+
 	/**List of clients who are currently playing or waiting to play*/
 	private ArrayList <ConnectionToClient> playersWaitingToPlay = new ArrayList <ConnectionToClient>();
 	/**List of ip addresses which have been kicked from the server and blocked*/
@@ -38,11 +57,11 @@ public class GameServer extends AbstractServer {
 	{
 		//Sends a control message to be displayed by the server host
 		DotsApplication.getInstance().display("#CTMessage received: \"" + msg + "\" from " + client.getInfo(LOGIN_ID) + " - " + client);
-		
+
 		if (msg.toString().startsWith("#Login")) //New user logging in
 		{
 			String newLogin = msg.toString().substring(7);	//Gets username from the message
-			
+
 			/*
 			 * Checks to see if the username has already been taken on the server
 			 * and informs the new client if is has been, then closes
@@ -58,7 +77,7 @@ public class GameServer extends AbstractServer {
 						client.sendToClient("#BadLogin " + newLogin + " NameTaken");
 					}
 					catch(IOException ex) {}
-					
+
 					try
 					{
 						client.close();
@@ -66,7 +85,7 @@ public class GameServer extends AbstractServer {
 					return;
 				}
 			}
-			
+
 			/*
 			 * Checks to see if the client's ip address has been blocked. If so,
 			 * tells the user they cannot connect to the server and then
@@ -82,7 +101,7 @@ public class GameServer extends AbstractServer {
 						client.sendToClient("#BadLogin Kicked");
 					}
 					catch (IOException ex) {}
-					
+
 					try
 					{
 						client.close();
@@ -91,13 +110,13 @@ public class GameServer extends AbstractServer {
 					return;
 				}
 			}
-			
+
 			//The first user to log on is saved as the server host
 			if (connections.length == 1 && serverLoginID == null)
 			{
 				serverLoginID = newLogin;
 			}
-			
+
 			try
 			{
 				//Sends the client the current state of the game
@@ -107,7 +126,7 @@ public class GameServer extends AbstractServer {
 			{
 				this.clientException(client, ex);
 			}
-			
+
 			//Sets the clients game info values to 0
 			client.setInfo(LOGIN_ID, newLogin);
 			client.setInfo("WIN", new Integer(0));
@@ -117,7 +136,7 @@ public class GameServer extends AbstractServer {
 			sendToAllClients("#SV" + newLogin + " has connected!");
 			return;
 		}
-		
+
 		//Other messages are parsed for information
 		try
 		{
@@ -128,12 +147,12 @@ public class GameServer extends AbstractServer {
 			this.clientException(client, ex);
 		}
 	}
-	
+
 	/**
 	 * Takes a message from a client and parses it for information
 	 * which is relevant to the user, or sends it to the rest of
 	 * the clients if it is not.
-	 * 
+	 *
 	 * @param msg the message to parse
 	 * @param client the client who sent the message
 	 * @throws IOException thrown if an error occurs while sending messages to clients
@@ -248,19 +267,19 @@ public class GameServer extends AbstractServer {
 		else if (uppercaseMessage.startsWith("#KICK")) //Indicates user wishes to kick another from the server
 		{
 			String userID = msg.toString().substring(6);
-			
+
 			if (!isClientServerHost(client))
 			{
 				client.sendToClient("#SVOnly the server host can do that!");
 				return;
 			}
-			
+
 			if (userID.equalsIgnoreCase(serverLoginID))
 			{
 				client.sendToClient("#SVYou can't kick the server host!");
 				return;
 			}
-			
+
 			/*
 			 * Finds the user to kick and removes them from the list of players. If they
 			 * are playing, they are forced to forfeit. Then, their ip address
@@ -277,15 +296,15 @@ public class GameServer extends AbstractServer {
 					break;
 				}
 			}
-			
+
 			if (clientToKick != null)
-			{	
+			{
 				int indexInWaitingList = playersWaitingToPlay.indexOf(clientToKick);
 				kickedClients.add(clientToKick.getInetAddress());
 				clientToKick.sendToClient("#Kicked");
 				clientToKick.close();
 				sendToAllClients("#SV" + userID + " has been kicked from the game.");
-				
+
 				if (indexInWaitingList == 0)
 				{
 					parseClientMessage("#GameOver 1", client);
@@ -323,7 +342,7 @@ public class GameServer extends AbstractServer {
 			{
 				client.sendToClient("#GMYou're not currently on the list of players waiting.");
 			}
-		}	
+		}
 		else if (uppercaseMessage.equalsIgnoreCase("#Quit")) //Indicates user wishes to close the server
 		{
 			//Only the server host can close the server
@@ -423,7 +442,7 @@ public class GameServer extends AbstractServer {
 				loser.sendToClient("#GMYou lost! You have been removed from the queue. To play again, type '#Play'");
 				playersWaitingToPlay.remove(loser);
 			}
-			
+
 			if (playersWaitingToPlay.size() >= 2)
 			{
 				startNewGame();
@@ -469,13 +488,13 @@ public class GameServer extends AbstractServer {
 			sendToAllClients(msg);
 		}
 	}
-	
+
 	/**
 	 * Builds a string containing the current state of any
 	 * game which is taking place, including the size of the board,
 	 * names of the players, and state of all of the squares and which
 	 * sides have been selected and filled.
-	 * 
+	 *
 	 * @return a string which represents the current state of the game
 	 */
 	private String getGameState()
@@ -483,7 +502,7 @@ public class GameServer extends AbstractServer {
 		StringBuilder gameStateBuilder = new StringBuilder();
 		GamePanel gamePanel = DotsApplication.getInstance().getGamePanel();
 		GameSquare[] gameSquares = gamePanel.getSquares();
-		
+
 		gameStateBuilder.append(gamePanel.getGridSize());
 		gameStateBuilder.append(" ");
 		gameStateBuilder.append(DotsApplication.getInstance().isGameInProgress());
@@ -499,13 +518,13 @@ public class GameServer extends AbstractServer {
 				gameStateBuilder.append(gameSquares[ii].getSideValue());
 			}
 		}
-		
+
 		return gameStateBuilder.toString();
 	}
-	
+
 	/**
 	 * Returns true if the client is the server host, false otherwise
-	 * 
+	 *
 	 * @param client the client to compare to the server host login id
 	 * @return true if <code>serverLoginID</code> is equal to
 	 * 			<code>client.getInfo(LOGIN_ID)</code>, ignoring case.
@@ -514,7 +533,7 @@ public class GameServer extends AbstractServer {
 	{
 		return serverLoginID.equalsIgnoreCase((String)client.getInfo(LOGIN_ID));
 	}
-	
+
 	/**
 	 * Randomly selects one of the first to clients in the list
 	 * <code>playersWaitingToPlay</code> to go first, sends a message
@@ -533,12 +552,12 @@ public class GameServer extends AbstractServer {
 			playersWaitingToPlay.add(0, playersWaitingToPlay.remove(1));
 		}
 	}
-	
+
 	/**
 	 * Sets a value with a key, specified in <code>info</code>, with the
 	 * first 3 characters being the key and the remaining characters
 	 * the value.
-	 * 
+	 *
 	 * @param info the key and value to store
 	 * @param client the connection which will store the value
 	 */
@@ -546,10 +565,10 @@ public class GameServer extends AbstractServer {
 	{
 		client.setInfo(info.substring(0, 3), Integer.parseInt(info.substring(4)));
 	}
-	
+
 	/**
 	 * Increments a value stored at a key specified in <code>info</code>
-	 * 
+	 *
 	 * @param info the key's which value will be incremented
 	 * @param client the connection which will store the value
 	 */
@@ -565,7 +584,7 @@ public class GameServer extends AbstractServer {
 	 * with the username specified by <code>info</code> and sends this value
 	 * to <code>client</code>. The first 3 characters of <code>info</code> specify
 	 * the key, and the remaining characters specify the username.
-	 * 
+	 *
 	 * @param info
 	 * @param client
 	 * @throws IOException
@@ -584,14 +603,14 @@ public class GameServer extends AbstractServer {
 				break;
 			}
 		}
-		
+
 		if (clientInfoToGet == null)
 		{
 			client.sendToClient("#SVThat user does not exist.");
 			return;
 		}
 		info = info.toUpperCase();
-		
+
 		if (info.startsWith("STA"))
 		{
 			messageToSend.append("Stats of " + clientInfoToGet.getInfo(LOGIN_ID) + ":\n");
@@ -640,21 +659,21 @@ public class GameServer extends AbstractServer {
 		{
 			messageToSend.append("That is not a valid command");
 		}
-		
+
 		client.sendToClient(messageToSend.toString());
 	}
-	
+
 	/**
 	 * Constructor which passes the parameter to the
 	 * AbstractServer super constructor
-	 * 
+	 *
 	 * @param port the port to create the server through
 	 */
 	public GameServer(int port)
 	{
 		super(port);
 	}
-	
+
 	@Override
 	synchronized protected void clientException(ConnectionToClient client, Throwable exception)
 	{

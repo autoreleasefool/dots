@@ -1,7 +1,26 @@
 /*
- * Joseph Roque 	7284039
- * Matt L'Arrivee 	6657183
- * 
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Joseph Roque, Matthew L'Arrivee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
  */
 
 package roquelarrivee.dots;
@@ -19,7 +38,7 @@ import javax.swing.JPanel;
 /**
  * Canvas to track and display the state of the game being
  * played on the server.
- * 
+ *
  * @author Joseph Roque
  * @author Matt L'Arrivee
  *
@@ -28,14 +47,14 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 {
 	/**Default generated serialVersionUID*/
 	private static final long serialVersionUID = 1L;
-	
+
 	/**Array of GameSquare objects representing the state of the game*/
 	private GameSquare[] squares = null;
 	/**Size of the board*/
 	private int gridSize;
 	/**Most recent values from getWidth() and getHeight()*/
 	private int lastCanvasWidth, lastCanvasHeight;
-	
+
 	/**
 	 * Constructor. Calls the super constructor then sets defaults
 	 * for a new instance of the class
@@ -43,27 +62,27 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	public GamePanel()
 	{
 		super();
-		
+
 		this.setMinimumSize(new Dimension(340, 340));
 		this.setBackground(Color.white);
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		if (getWidth() != lastCanvasWidth || getHeight() != lastCanvasHeight)
 		{
 			lastCanvasWidth = getWidth();
 			lastCanvasHeight = getHeight();
 		}
-		
+
 		//Clearing canvas
 		g.setColor(new Color(171,214,255));
 		g.fillRect(0, 0, getWidth(), getHeight());
-		
+
 		int canvasWidth = lastCanvasWidth - 8;
 		int canvasHeight = lastCanvasHeight - (DotsApplication.getInstance().isGameInProgress() ? 140:100);
 		int boardSize = (canvasWidth > canvasHeight) ? canvasHeight:canvasWidth;
@@ -71,26 +90,26 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		//Drawing the squares to the screen
 		if (squares != null)
 		{
-			
+
 			int offset = (canvasWidth > canvasHeight) ? ((canvasWidth - canvasHeight) / 2):0;
 			g.setColor(Color.white);
 			g.fillRect(offset, 0, boardSize+8, boardSize+8);
 			GameSquare.resetProperties(boardSize, offset);
-			
+
 			for (int ii = 0; ii < squares.length; ii++)
 			{
 				squares[ii].paint(g);
 			}
 		}
-		
+
 		//Drawing white rectangle for game info
 		g.setColor(Color.white);
 		g.fillRect(5, boardSize + 13, lastCanvasWidth - 10, lastCanvasHeight - (boardSize + 13) - 5);
-		
+
 		//Drawing information on current player's turn
 		g.setFont(g.getFont().deriveFont(24f));
 		FontMetrics fontMetrics = g.getFontMetrics();
-		
+
 		if (DotsApplication.getInstance().isPlayerTurn())
 		{
 			g.setColor(DotsApplication.getInstance().isPlayerOne() ? Color.red:Color.blue);
@@ -106,13 +125,13 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			g.setColor(Color.black);
 			g.drawString("You are not playing", lastCanvasWidth / 2 - fontMetrics.stringWidth("You are not playing") / 2, boardSize + 18 + fontMetrics.getHeight());
 		}
-		
+
 		g.setFont(g.getFont().deriveFont(18f));
 		fontMetrics = g.getFontMetrics();
-		
+
 		g.setColor(Color.black);
 		g.drawString("Last winner: " + DotsApplication.getInstance().getWinnerOfLastGame(), 10, boardSize + 47 + fontMetrics.getHeight());
-		
+
 		if (DotsApplication.getInstance().isGameInProgress())
 		{
 			g.setColor(Color.red);
@@ -120,15 +139,15 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			g.setColor(Color.blue);
 			g.drawString("Player 2: " + DotsApplication.getInstance().getPlayerTwoName(), 10, boardSize + 60 + fontMetrics.getHeight() * 3);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Counts the number of squares which are filled, then compares the count
 	 * of squares player 1 finished vs. player 2. If all the squares are finished,
 	 * returns either '1' or '2', corresponding to the loser, '3' if it was a tie,
 	 * or '0' if the game is not over yet.
-	 * 
+	 *
 	 * @return 0-3, 0 meaning the game is not over, 1-2 being the losing player,
 	 * 3 meaning a tie.
 	 */
@@ -148,7 +167,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 				return 0;
 			}
 		}
-		
+
 		if (playerOneSquareCount > playerTwoSquareCount)
 		{
 			return 2;
@@ -162,7 +181,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			return 3;
 		}
 	}
-	
+
 	@Override
 	public void mousePressed(MouseEvent event)
 	{
@@ -171,7 +190,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		{
 			return;
 		}
-		
+
 		if (squares != null)
 		{
 			for (int ii = 0; ii < squares.length; ii++)
@@ -179,7 +198,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 				//Checks to see if the user is over square and processes the event if so
 				if (squares[ii].contains(event.getPoint()))
 				{
-					
+
 					int lineClicked = squares[ii].getPotentialLineDrawn();
 					if (squares[ii].isLineFilled(lineClicked) || lineClicked == 0)
 					{
@@ -193,7 +212,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			repaint();
 		}
 	}
-	
+
 	@Override
 	public void mouseMoved(MouseEvent event) {
 		//User cannot do anything if they are not playing
@@ -201,7 +220,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 		{
 			return;
 		}
-		
+
 		if (squares != null)
 		{
 			//Checks to see if the user is over square and processes the event if so
@@ -217,7 +236,7 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 			g.dispose();
 		}
 	}
-	
+
 	@Override
 	public void mouseReleased(MouseEvent event) {}
 	@Override
@@ -228,13 +247,13 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	public void mouseEntered(MouseEvent event) {}
 	@Override
 	public void mouseExited(MouseEvent event) {}
-	
+
 	/**
 	 * Sets the value of <code>gridSize</code> and instantiates a new
 	 * array of <code>GameSquare</code> objects with the values
 	 * in <code>gameSquareValues</code>. If <code>gameSquareValues</code>
 	 * is null, a value of '0' is used.
-	 * 
+	 *
 	 * @param aGridSize the new value for <code>gridSize</code>
 	 * @param gameSquareValues the values to instantiate <code>squares</code> with
 	 */
@@ -242,24 +261,24 @@ public class GamePanel extends JPanel implements MouseListener, MouseMotionListe
 	{
 		gridSize = aGridSize;
 		GameSquare.setGridSize(gridSize);
-		
+
 		squares = new GameSquare[gridSize * gridSize];
 		for (int ii = 0; ii < gridSize * gridSize; ii++)
 		{
 			squares[ii] = new GameSquare(ii % gridSize, ii / gridSize, (gameSquareValues != null ? (gameSquareValues.length >= ii ? gameSquareValues[ii]:0):0));
 		}
 	}
-	
+
 	/**
 	 * Getter method for <code>gridSize</code>
-	 * 
+	 *
 	 * @return the value of <code>gridSize</code>
 	 */
 	public int getGridSize() {return gridSize;}
-	
+
 	/**
 	 * Getter method for <code>squares</code>
-	 * 
+	 *
 	 * @return the array of <code>squares</code>
 	 */
 	public GameSquare[] getSquares()

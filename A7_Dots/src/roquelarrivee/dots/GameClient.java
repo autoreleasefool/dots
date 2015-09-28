@@ -1,7 +1,26 @@
 /*
- * Joseph Roque 	7284039
- * Matt L'Arrivee 	6657183
- * 
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Joseph Roque, Matthew L'Arrivee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
  */
 
 package roquelarrivee.dots;
@@ -25,7 +44,7 @@ public class GameClient extends AbstractClient
 	private ChatIF clientUI;
 	/**The login id used by the client*/
 	private String loginID;
-	
+
 	@Override
 	public void sendToServer(Object message) throws IOException
 	{
@@ -37,11 +56,11 @@ public class GameClient extends AbstractClient
 	{
 		clientUI.display(msg.toString());
 	}
-	
+
 	/**
 	 * Checks the message for proper formatting and invalid commands,
 	 * then sends the message to the server.
-	 * 
+	 *
 	 * @param message the message to check
 	 * @throws IOException error sending message to the server
 	 */
@@ -56,7 +75,7 @@ public class GameClient extends AbstractClient
 				return;
 			}
 		}
-		
+
 		if (uppercaseMessage.equalsIgnoreCase("#Logoff"))
 		{
 			sendToServer(message);
@@ -91,7 +110,7 @@ public class GameClient extends AbstractClient
 	/**
 	 * Receives input from the user interface and parses the message, then
 	 * sends it to the server.
-	 * 
+	 *
 	 * @param message the input to be parsed
 	 * @see GameClient#performCommand(String)
 	 */
@@ -114,10 +133,10 @@ public class GameClient extends AbstractClient
 			clientUI.display("#CLThat is not a valid message.");
 		}
 	}
-	
+
 	/**
 	 * Attempts to connect to the server
-	 * 
+	 *
 	 * @throws IOException error connecting to the server
 	 */
 	private void connectToServer() throws IOException
@@ -128,13 +147,13 @@ public class GameClient extends AbstractClient
 			sendToServer("#Login " + loginID);
 		}
 	}
-	
+
 	public String getLoginID() {return loginID;}
-	
+
 	/**
 	 * Constructor. Sends host and port to the super constructor, then
 	 * tries to connect to the server.
-	 * 
+	 *
 	 * @param loginID username the client wishes to use
 	 * @param host hostname the client wishes to connect to
 	 * @param port port number the client wishes to connect on
@@ -146,7 +165,7 @@ public class GameClient extends AbstractClient
 		super(host, port);
 		this.loginID = loginID;
 		this.clientUI = clientUI;
-		
+
 		try
 		{
 			connectToServer();
@@ -157,4 +176,3 @@ public class GameClient extends AbstractClient
 		}
 	}
 }
-

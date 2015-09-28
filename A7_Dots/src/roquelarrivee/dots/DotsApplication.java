@@ -1,7 +1,26 @@
 /*
- * Joseph Roque 	7284039
- * Matt L'Arrivee 	6657183
- * 
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Joseph Roque, Matthew L'Arrivee
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
  */
 
 package roquelarrivee.dots;
@@ -66,7 +85,7 @@ import javax.swing.text.StyledDocument;
 /**
  * Singleton class which wraps the GameServer and GameClient
  * in a GUI.
- * 
+ *
  * @author Joseph Roque
  * @author Matthew L'Arrivee
  */
@@ -74,7 +93,7 @@ public class DotsApplication implements ChatIF
 {
 	/**Singleton instance of DotsApplication class*/
 	private static DotsApplication instance = null;
-	
+
 	/**Represents the introduction screen in the CardLayout*/
 	private static final String PANEL_INTRO = "Panel_ServerOrClient";
 	/**Represents the join server screen in the CardLayout*/
@@ -83,17 +102,17 @@ public class DotsApplication implements ChatIF
 	private static final String PANEL_CREATE_SERVER = "Panel_NewServer";
 	/**Represents the game screen in the CardLayout*/
 	private static final String PANEL_GAME = "Panel_Game";
-	
+
 	/**Indicates whether errors should be printed to the console - for debugging*/
 	private static final boolean printErrorsToConsole = false;
 	/**Indicates whether server status messages should be displayed to the server host*/
 	private static boolean controlMessagesEnabled = true;
-	
+
 	/**Instance of the game server*/
 	private GameServer dotsGameServer = null;
 	/**Instance of the game client*/
 	private GameClient dotsGameClient = null;
-	
+
 	/**Frame which contains the application*/
 	private JFrame frame = null;
 	/**Dialog to display information about the application*/
@@ -116,12 +135,12 @@ public class DotsApplication implements ChatIF
 	private JTextArea ipAddressArea = null;
 	/**Panel where the game is displayed and played*/
 	private GamePanel gamePanel = null;
-	
+
 	/**JSplitPane to divide the input field and the custom text pane for messages*/
 	private JSplitPane splitMessagesAndInput = null;
 	/**JSplitPane to divide the game and the message area*/
 	private JSplitPane splitChatAndGame = null;
-	
+
 	/**Indicates whether the user is player one*/
 	private boolean playerOne = false;
 	/**Indicates whether the user is player two*/
@@ -140,15 +159,15 @@ public class DotsApplication implements ChatIF
 	private boolean gameInProgress;
 	/**Count of the number of control messages received by the server*/
 	private int controlMessageCount = 0;
-	
+
 	/**List of JMenuItems which should not be enabled when the client is not connected*/
 	private ArrayList<JMenuItem> connectedClientMenuItems = new ArrayList<JMenuItem>();
-	
+
 	/**
 	 * Checks to make sure the message is not a reserved command and
 	 * begins with the character '#', then sends it to the game client
 	 * to be sent to the server.
-	 * 
+	 *
 	 * @param message the string to check
 	 */
 	public void formatMessageForClient(String message)
@@ -158,7 +177,7 @@ public class DotsApplication implements ChatIF
 		{
 			return;
 		}
-		
+
 		if (message.charAt(0) == '#') //If the message is a command from the user
 		{
 			//Filters certain commands which the user should not have access to
@@ -168,7 +187,7 @@ public class DotsApplication implements ChatIF
 				display("#CLThat is not a valid message.");
 				return;
 			}
-			
+
 			sendMessageToClient(message);
 		}
 		else //any other messages are treated as chat messages
@@ -176,7 +195,7 @@ public class DotsApplication implements ChatIF
 			sendMessageToClient("#MSG" + getLoginID() + ":" + chatInputArea.getText());
 		}
 	}
-	
+
 	/**
 	 * Sends a string to the game client to be sent to the server.
 	 * @param message
@@ -190,7 +209,7 @@ public class DotsApplication implements ChatIF
 	public void display(String message)
 	{
 		boolean shouldPrintMessageToChat = false; //indicates whether a message will be displayed to the user
-		
+
 		if (message.startsWith("#BadLogin")) //User has been rejected from the server
 		{
 			final String finalMessage = message;
@@ -208,7 +227,7 @@ public class DotsApplication implements ChatIF
 					}
 				}
 			});
-			
+
 			dotsGameClient = null;
 		}
 		else if (message.startsWith("#Move")) //A move was made in the game
@@ -227,9 +246,9 @@ public class DotsApplication implements ChatIF
 						selectedSquare = Integer.parseInt(moveInfo[1]);
 						selectedSide = Integer.parseInt(moveInfo[2]);
 						userWhoPlayed = Integer.parseInt(moveInfo[3]);
-					} 
+					}
 					catch (Exception nfe) {}
-					
+
 					switch(selectedSide)
 					{
 					case GameSquare.TOP_POTENTIAL:
@@ -245,7 +264,7 @@ public class DotsApplication implements ChatIF
 						wasSquareCompleted = gamePanel.getSquares()[selectedSquare].pressed(gamePanel.getSquares(), userWhoPlayed, GameSquare.LEFT_POTENTIAL);
 						break;
 					}
-					
+
 					//Checks if it is now the user's turn
 					if (isPlayer())
 					{
@@ -258,24 +277,24 @@ public class DotsApplication implements ChatIF
 							playerTurn = (wasSquareCompleted > 0) ? playerTwo:playerOne;
 						}
 					}
-					
+
 					//Checks if the game has ended
 					if (isServerHost())
 					{
-						
-						
+
+
 						int loserOfGame = gamePanel.getLoserOfGame();
 						if (loserOfGame != 0)
 						{
 							sendMessageToClient("#GameOver " + loserOfGame);
 						}
 					}
-					
+
 					//Updates the game panel
 					gamePanel.repaint();
 				}
 			});
-			
+
 			return;
 		}
 		else if (message.startsWith("#Settings")) //Server message about the current state of the game
@@ -294,21 +313,21 @@ public class DotsApplication implements ChatIF
 					gameSquareValues[ii] = Integer.parseInt(settingsInfo[ii + 5]);
 				}
 			}
-			
+
 			if (playOrWatch)
 			{
 				sendMessageToClient("#Play");
 			}
 			showGamePanel(gridSize, gameSquareValues);
-			
+
 			return;
 		}
 		else if (message.startsWith("#GameOver")) //Server message about the game ending
 		{
 			winnerOfLastGame = message.substring(10);
 			message = "#GMThe game has ended! The winner is: " + winnerOfLastGame;
-			
-			//Increases the player's # of games played, and wins or losses 
+
+			//Increases the player's # of games played, and wins or losses
 			if (isPlayer())
 			{
 				sendMessageToClient("#IncGPL");
@@ -321,7 +340,7 @@ public class DotsApplication implements ChatIF
 					sendMessageToClient("#IncLOS");
 				}
 			}
-			
+
 			playerTurn = false;
 			playerOne = false;
 			playerTwo = false;
@@ -329,7 +348,7 @@ public class DotsApplication implements ChatIF
 			playerTwoName = "";
 			gameInProgress = false;
 			shouldPrintMessageToChat = true;
-			
+
 			SwingUtilities.invokeLater(new Runnable()
 			{
 				@Override
@@ -406,15 +425,15 @@ public class DotsApplication implements ChatIF
 			 */
 			shouldPrintMessageToChat = true;
 		}
-		
+
 		//If the remaining message is not to be displayed, the method exists
 		if (!shouldPrintMessageToChat)
 		{
 			return;
 		}
-		
+
 		final String messageToPrint = message;
-		
+
 		/*
 		 * Formats and displays the string to the message area
 		 * in the event dispatch thread.
@@ -434,7 +453,7 @@ public class DotsApplication implements ChatIF
 					 *	"gameMessage"	To display messages related to the game
 					 *	"chatMessage"	To display chat messages
 					 *	"userName"		To display other users' names
-					 *	"thisUser"		To display this user's name 
+					 *	"thisUser"		To display this user's name
 					 */
 					if (messageToPrint.startsWith("#SV"))
 					{
@@ -476,10 +495,10 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Creates the layout for the intro panel and then returns it.
-	 * 
+	 *
 	 * @return the completed intro panel.
 	 */
 	private JPanel createIntroPanel()
@@ -487,7 +506,7 @@ public class DotsApplication implements ChatIF
 		JPanel serverOrClientPanel = new JPanel();
 		serverOrClientPanel.setPreferredSize(new Dimension(800, 600));
 		serverOrClientPanel.setLayout(new BoxLayout(serverOrClientPanel, BoxLayout.Y_AXIS));
-		
+
 		JButton buttonCreateServer = new JButton("Create a Server");
 		buttonCreateServer.setFocusPainted(false);
 		buttonCreateServer.addActionListener(new ActionListener()
@@ -498,7 +517,7 @@ public class DotsApplication implements ChatIF
 				cardLayout.show(frame.getContentPane(), PANEL_CREATE_SERVER);
 			}
 		});
-		
+
 		JButton buttonJoinServer = new JButton("Join a Server");
 		buttonJoinServer.setFocusPainted(false);
 		buttonJoinServer.addActionListener(new ActionListener()
@@ -509,7 +528,7 @@ public class DotsApplication implements ChatIF
 				cardLayout.show(frame.getContentPane(), PANEL_JOIN_SERVER);
 			}
 		});
-		
+
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(2, 1));
 		buttonPanel.setMaximumSize(new Dimension(200, 150));
@@ -518,23 +537,23 @@ public class DotsApplication implements ChatIF
 		serverOrClientPanel.add(Box.createVerticalGlue());
 		serverOrClientPanel.add(buttonPanel);
 		serverOrClientPanel.add(Box.createVerticalGlue());
-		
+
 		return serverOrClientPanel;
 	}
-	
+
 	/**
 	 * Creates the layout for the join server panel and then returns it.
-	 * 
+	 *
 	 * @return the completed join server panel.
 	 */
 	private JPanel createJoinServerPanel() {
 		JPanel loginPanel = new JPanel();
 		loginPanel.setLayout(new BoxLayout(loginPanel, BoxLayout.Y_AXIS));
-		
+
 		final JTextField userNameTextField = new JTextField(20);
 		final JTextField hostNameTextField = new JTextField("localhost");
 		hostNameTextField.setForeground(Color.gray);
-		
+
 		/*
 		 * Automatically sets the text field's text if it loses focus
 		 * and is empty. When focus is regained, if the default text
@@ -552,7 +571,7 @@ public class DotsApplication implements ChatIF
 					hostNameTextField.setForeground(Color.black);
 				}
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent event)
 			{
@@ -563,7 +582,7 @@ public class DotsApplication implements ChatIF
 				}
 			}
 		});
-		
+
 		/*
 		 * Automatically sets the text field's text if it loses focus
 		 * and is empty. When focus is regained, if the default text
@@ -583,7 +602,7 @@ public class DotsApplication implements ChatIF
 					portNumberTextField.setForeground(Color.black);
 				}
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent event)
 			{
@@ -594,22 +613,22 @@ public class DotsApplication implements ChatIF
 				}
 			}
 		});
-		
+
 		JLabel userNameLabel = new JLabel("Username:");
 		userNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		JLabel hostNameLabel = new JLabel("Host:");
 		hostNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		JLabel portNumberLabel = new JLabel("Port:");
 		portNumberLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		final JRadioButton playRadioButton = new JRadioButton("Play");
 		final JRadioButton watchRadioButton = new JRadioButton("Watch");
-		
+
 		ButtonGroup radioButtonGroup = new ButtonGroup();
 		radioButtonGroup.add(playRadioButton);
 		radioButtonGroup.add(watchRadioButton);
 		playRadioButton.setSelected(true);
-		
+
 		JButton joinServerButton = new JButton("Join Server");
 		joinServerButton.addActionListener(new ActionListener()
 		{
@@ -623,7 +642,7 @@ public class DotsApplication implements ChatIF
 				playRadioButton.setSelected(true);
 			}
 		});
-		
+
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener()
 		{
@@ -637,13 +656,13 @@ public class DotsApplication implements ChatIF
 				playRadioButton.setSelected(true);
 			}
 		});
-		
+
 		JPanel inputPanel = new JPanel();
 		inputPanel.setMaximumSize(new Dimension(350, 200));
 		inputPanel.setMinimumSize(new Dimension(350, 200));
 		inputPanel.setPreferredSize(new Dimension(350, 200));
 		inputPanel.setLayout(new GridBagLayout());
-		
+
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.weightx = 0.5;
 		constraints.gridx = 0;
@@ -700,37 +719,37 @@ public class DotsApplication implements ChatIF
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		inputPanel.add(cancelButton, constraints);
-		
+
 		JPanel contentPanel = new JPanel();
 		contentPanel.add(inputPanel, BorderLayout.CENTER);
-		
+
 		loginPanel.add(Box.createVerticalGlue());
 		loginPanel.add(contentPanel);
 		loginPanel.add(Box.createVerticalGlue());
-		
+
 		return loginPanel;
 	}
-	
+
 	/**
 	 * Creates the layout for the new server panel and then returns it.
-	 * 
+	 *
 	 * @return the completed new server panel.
 	 */
 	private JPanel createNewServerPanel()
 	{
 		JPanel serverPanel = new JPanel();
-		
+
 		JLabel userNameLabel = new JLabel("Username:");
 		userNameLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		JLabel portNumberLabel = new JLabel("Port");
 		portNumberLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		JLabel gridSizeLabel = new JLabel("Grid Size:");
 		gridSizeLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		
+
 		final JTextField userNameTextField = new JTextField(20);
 		final JTextField portNumberTextField = new JTextField("5555");
 		portNumberTextField.setForeground(Color.gray);
-		
+
 		/*
 		 * Automatically sets the text field's text if it loses focus
 		 * and is empty. When focus is regained, if the default text
@@ -748,7 +767,7 @@ public class DotsApplication implements ChatIF
 					portNumberTextField.setForeground(Color.black);
 				}
 			}
-			
+
 			@Override
 			public void focusLost(FocusEvent event)
 			{
@@ -759,7 +778,7 @@ public class DotsApplication implements ChatIF
 				}
 			}
 		});
-		
+
 		final JSlider gridSizeSlider = new JSlider();
 		gridSizeSlider.setMinimum(3);
 		gridSizeSlider.setMaximum(9);
@@ -768,15 +787,15 @@ public class DotsApplication implements ChatIF
 		gridSizeSlider.setPaintLabels(true);
 		gridSizeSlider.setSnapToTicks(true);
 		gridSizeSlider.setValue(5);
-		
+
 		final JRadioButton playRadioButton = new JRadioButton("Play");
 		final JRadioButton watchRadioButton = new JRadioButton("Watch");
-		
+
 		ButtonGroup radioButtonGroup = new ButtonGroup();
 		radioButtonGroup.add(playRadioButton);
 		radioButtonGroup.add(watchRadioButton);
 		playRadioButton.setSelected(true);
-		
+
 		JButton createServerButton = new JButton("Create Server");
 		createServerButton.addActionListener(new ActionListener()
 		{
@@ -790,7 +809,7 @@ public class DotsApplication implements ChatIF
 				playRadioButton.setSelected(true);
 			}
 		});
-		
+
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener()
 		{
@@ -804,13 +823,13 @@ public class DotsApplication implements ChatIF
 				playRadioButton.setSelected(true);
 			}
 		});
-		
+
 		JPanel inputPanel = new JPanel();
 		inputPanel.setMaximumSize(new Dimension(350, 200));
 		inputPanel.setMinimumSize(new Dimension(350, 200));
 		inputPanel.setPreferredSize(new Dimension(350, 200));
 		inputPanel.setLayout(new GridBagLayout());
-		
+
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.weightx = 0.5;
 		constraints.gridx = 0;
@@ -867,36 +886,36 @@ public class DotsApplication implements ChatIF
 		constraints.anchor = GridBagConstraints.NORTH;
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		inputPanel.add(cancelButton, constraints);
-		
+
 		JPanel contentPanel = new JPanel();
 		contentPanel.add(inputPanel, BorderLayout.CENTER);
-		
+
 		serverPanel.setLayout(new BoxLayout(serverPanel, BoxLayout.Y_AXIS));
 		serverPanel.add(Box.createVerticalGlue());
 		serverPanel.add(contentPanel);
 		serverPanel.add(Box.createVerticalGlue());
-		
+
 		return serverPanel;
 	}
-	
+
 	/**
 	 * Creates the layout for the game panel and then returns it.
-	 * 
+	 *
 	 * @return the completed game panel.
 	 */
 	private JPanel createGamePanel()
 	{
 		gamePanel = new GamePanel();
-		
+
 		JPanel dotsPanel = new JPanel();
 		dotsPanel.setLayout(new BorderLayout());
 		dotsPanel.setPreferredSize(new Dimension(550, 600));
 		dotsPanel.add(gamePanel, BorderLayout.CENTER);
-		
+
 		JPanel chatPanel = new JPanel();
 		chatPanel.setLayout(new BorderLayout());
 		chatPanel.setPreferredSize(new Dimension(250, 600));
-		
+
 		chatMessageArea = new JTextPane();
 		chatMessageArea.setEditable(false);
 		DefaultCaret caret = (DefaultCaret)chatMessageArea.getCaret();
@@ -908,7 +927,7 @@ public class DotsApplication implements ChatIF
 		StyleConstants.setForeground(chatMessageArea.addStyle("clientMessage", null), Color.pink);
 		StyleConstants.setForeground(chatMessageArea.addStyle("gameMessage", null), Color.orange);
 		StyleConstants.setForeground(chatMessageArea.addStyle("controlMessage", null), Color.darkGray);
-		
+
 		final JButton sendMessageButton = new JButton("Send");
 		sendMessageButton.addActionListener(new ActionListener()
 		{
@@ -925,7 +944,7 @@ public class DotsApplication implements ChatIF
 				});
 		}
 		});
-		
+
 		chatInputArea = new JTextArea();
 		chatInputArea.setLineWrap(true);
 		chatInputArea.setWrapStyleWord(true);
@@ -955,51 +974,51 @@ public class DotsApplication implements ChatIF
 				}
 			}
 		});
-		
+
 		JScrollPane messageScrollPane = new JScrollPane(chatMessageArea);
 		messageScrollPane.setMinimumSize(new Dimension(140, 150));
 		JScrollPane inputScrollPane = new JScrollPane(chatInputArea);
 		inputScrollPane.setMinimumSize(new Dimension(140, 50));
-		
+
 		JPanel inputPanel = new JPanel();
 		inputPanel.setLayout(new BorderLayout());
 		inputPanel.add(inputScrollPane, BorderLayout.CENTER);
 		inputPanel.add(sendMessageButton, BorderLayout.SOUTH);
-		
+
 		ipAddressArea = new JTextArea("IP Address of Server: \n\n");
 		ipAddressArea.setEnabled(false);
 		ipAddressArea.setWrapStyleWord(true);
 		ipAddressArea.setLineWrap(true);
-		
+
 		splitMessagesAndInput = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
 		splitMessagesAndInput.setTopComponent(messageScrollPane);
 		splitMessagesAndInput.setBottomComponent(inputPanel);
 		splitMessagesAndInput.setResizeWeight(1.0);
 		chatPanel.add(ipAddressArea, BorderLayout.NORTH);
 		chatPanel.add(splitMessagesAndInput, BorderLayout.CENTER);
-		
+
 		splitChatAndGame = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 		splitChatAndGame.setLeftComponent(gamePanel);
 		splitChatAndGame.setRightComponent(chatPanel);
 		splitChatAndGame.setResizeWeight(1.0);
-		
+
 		JPanel gamePanel = new JPanel();
 		gamePanel.setLayout(new BorderLayout());
 		gamePanel.add(splitChatAndGame, BorderLayout.CENTER);
 
 		return gamePanel;
 	}
-	
+
 	/**
 	 * Creates the JMenuBar for the frame and all of its submenus and items
 	 * then returns it.
-	 * 
+	 *
 	 * @return the completed JMenuBar
 	 */
 	private JMenuBar createJMenuBar()
 	{
 		MenuBarActionListener menuBarActionListener = new MenuBarActionListener();
-		
+
 		//"File" Menu
 		JMenuItem aboutMenuItem = new JMenuItem("About Dots");
 		aboutMenuItem.setActionCommand("#FILE About");
@@ -1011,14 +1030,14 @@ public class DotsApplication implements ChatIF
 		JMenuItem quitMenuItem = new JMenuItem("Quit");
 		quitMenuItem.setActionCommand("#FILE Quit");
 		quitMenuItem.addActionListener(menuBarActionListener);
-		
+
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.add(aboutMenuItem);
 		fileMenu.addSeparator();
 		fileMenu.add(logOffMenuItem);
 		fileMenu.addSeparator();
 		fileMenu.add(quitMenuItem);
-		
+
 		//"Game" Menu
 		JMenuItem joinQueueMenuItem = new JMenuItem("Join Queue");
 		joinQueueMenuItem.setActionCommand("#GAME #Play");
@@ -1032,13 +1051,13 @@ public class DotsApplication implements ChatIF
 		forfeitMenuItem.setActionCommand("#GAME #Forfeit");
 		forfeitMenuItem.addActionListener(menuBarActionListener);
 		connectedClientMenuItems.add(forfeitMenuItem);
-		
+
 		JMenu gameMenu = new JMenu("Game");
 		gameMenu.add(joinQueueMenuItem);
 		gameMenu.add(leaveQueueMenuItem);
 		gameMenu.addSeparator();
 		gameMenu.add(forfeitMenuItem);
-		
+
 		//"Get Info" Menu
 		JMenuItem positionMenuItem = new JMenuItem("My position in queue?");
 		positionMenuItem.setActionCommand("#GET #Position");
@@ -1076,7 +1095,7 @@ public class DotsApplication implements ChatIF
 		getPortNumberMenuItem.setActionCommand("#GET #GetPort");
 		getPortNumberMenuItem.addActionListener(menuBarActionListener);
 		connectedClientMenuItems.add(getPortNumberMenuItem);
-		
+
 		JMenu getMenu = new JMenu("Get Info");
 		getMenu.add(positionMenuItem);
 		getMenu.add(playersMenuItem);
@@ -1089,7 +1108,7 @@ public class DotsApplication implements ChatIF
 		getMenu.addSeparator();
 		getMenu.add(getHostNameMenuItem);
 		getMenu.add(getPortNumberMenuItem);
-		
+
 		//"Server Commands" Menu
 		JMenuItem controlMessagesMenuItem = new JMenuItem("Disable Server Info Messages");
 		controlMessagesMenuItem.setActionCommand("#SV Ctrl");
@@ -1103,7 +1122,7 @@ public class DotsApplication implements ChatIF
 		JMenuItem kickPlayerMenuItem = new JMenuItem("Kick Player");
 		kickPlayerMenuItem.setActionCommand("#SV #Kick");
 		kickPlayerMenuItem.addActionListener(menuBarActionListener);
-		
+
 		JMenu serverMenu = new JMenu("Server Commands");
 		serverMenu.add(controlMessagesMenuItem);
 		serverMenu.addSeparator();
@@ -1111,7 +1130,7 @@ public class DotsApplication implements ChatIF
 		serverMenu.add(startListeningMenuItem);
 		serverMenu.addSeparator();
 		serverMenu.add(kickPlayerMenuItem);
-		
+
 		//"Help" Menu
 		JMenuItem howToPlayMenuItem = new JMenuItem("Getting Started");
 		howToPlayMenuItem.setActionCommand("#HELP How");
@@ -1123,28 +1142,28 @@ public class DotsApplication implements ChatIF
 		usersMenuItem.setActionCommand("#HELP #Users");
 		usersMenuItem.addActionListener(menuBarActionListener);
 		connectedClientMenuItems.add(usersMenuItem);
-		
+
 		JMenu helpMenu = new JMenu("Help");
 		helpMenu.add(howToPlayMenuItem);
 		helpMenu.add(commandsMenuItem);
 		helpMenu.addSeparator();
 		helpMenu.add(usersMenuItem);
-		
+
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(fileMenu);
 		menuBar.add(gameMenu);
 		menuBar.add(getMenu);
 		menuBar.add(serverMenu);
 		menuBar.add(helpMenu);
-		
+
 		return menuBar;
 	}
-	
+
 	/**
 	 * Confirms that all input is valid (if not, displays a message to the user)
 	 * then creates a new instance of GameServer and begins listening
 	 * for clients. Then, joins the server as a client on a local connection.
-	 * 
+	 *
 	 * @param userName the user-provided input for a username
 	 * @param portNumber the user-provided number for a port to create the server on
 	 * @param gridSize the size of the game field
@@ -1163,7 +1182,7 @@ public class DotsApplication implements ChatIF
 			JOptionPane.showMessageDialog(frame, "Sorry, your username must consist of only numbers, letters and dashes, and be between 1-16 characters. Please enter another.", "Invalid username", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		try {
 			portNumberIntValue = Integer.parseInt(portNumber);
 		}
@@ -1179,7 +1198,7 @@ public class DotsApplication implements ChatIF
 				return;
 			}
 		}
-		
+
 		dotsGameServer = new GameServer(portNumberIntValue);
 		try
 		{
@@ -1191,7 +1210,7 @@ public class DotsApplication implements ChatIF
 			dotsGameServer = null;
 			return;
 		}
-		
+
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override
@@ -1206,17 +1225,17 @@ public class DotsApplication implements ChatIF
 				catch (Exception ex){}
 			}
 		});
-		
+
 		setServerCommandsEnabled(true);
 		gamePanel.setGridSize(gridSize, null);
 		joinServer(userName, "localhost", portNumber, playOrWatch);
 	}
-	
+
 	/**
 	 * Confirms that all input is valid (if not, displays a message to the user)
-	 * then creates a new instance of GameClient and connects to the 
+	 * then creates a new instance of GameClient and connects to the
 	 * server specified by <code>hostName</code>.
-	 * 
+	 *
 	 * @param userName the user-provided input for username
 	 * @param hostName the user-provided input for host name
 	 * @param portNumber the user-provided input for a port number
@@ -1225,13 +1244,13 @@ public class DotsApplication implements ChatIF
 	private void joinServer(String userName, String hostName, String portNumber, boolean playOrWatch)
 	{
 		int portNumberIntValue = 0;
-		
+
 		if (hostName.equals(""))
 		{
 			JOptionPane.showMessageDialog(frame, "You must enter a host name.", "Invalid host name", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		if (userName.equalsIgnoreCase("Server"))
 		{
 			JOptionPane.showMessageDialog(frame, "Sorry, '" + userName + "' is not a valid name. Please enter another.", "Invalid username", JOptionPane.ERROR_MESSAGE);
@@ -1242,7 +1261,7 @@ public class DotsApplication implements ChatIF
 			JOptionPane.showMessageDialog(frame, "Sorry, your username must consist of only numbers, letters and dashes, and be between 1-16 characters. Please enter another.", "Invalid username", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		try {
 			portNumberIntValue = Integer.parseInt(portNumber);
 		}
@@ -1258,10 +1277,10 @@ public class DotsApplication implements ChatIF
 				return;
 			}
 		}
-		
+
 		this.playOrWatch = playOrWatch;
 		dotsGameClient = new GameClient(userName, hostName, portNumberIntValue, this);
-		
+
 		if (dotsGameServer == null)
 		{
 			SwingUtilities.invokeLater(new Runnable()
@@ -1279,16 +1298,16 @@ public class DotsApplication implements ChatIF
 				}
 			});
 		}
-		
+
 		setConnectedClientCommandsEnabled(true);
 	}
-	
+
 	/**
 	 * Calls the <code>closeConnection()</code> method on <code>dotsGameClient</code>
 	 * if it is not null, then calls <code>close()</code> on <code>dotsGameServer</code>
 	 * if it is not null. Finally, either exits the application or returns to the
 	 * intro panel depending on <code>shouldExit</code>.
-	 * 
+	 *
 	 * @param shouldExit Method will call System.exit(0) if true
 	 */
 	public void closeClientAndServer(boolean shouldExit)
@@ -1304,7 +1323,7 @@ public class DotsApplication implements ChatIF
 		}
 		catch (IOException ex) {}
 		dotsGameClient = null;
-		
+
 		try
 		{
 			if (dotsGameServer != null)
@@ -1314,9 +1333,9 @@ public class DotsApplication implements ChatIF
 			}
 		}
 		catch (IOException ex) {}
-		
+
 		dotsGameServer = null;
-		
+
 		if (shouldExit)
 		{
 			System.exit(0);
@@ -1327,10 +1346,10 @@ public class DotsApplication implements ChatIF
 			controlMessagesEnabled = true;
 			playerOne = playerTwo = playerTurn = gameInProgress = false;
 			playerOneName = playerTwoName = winnerOfLastGame = "";
-			
+
 			setConnectedClientCommandsEnabled(false);
 			setServerCommandsEnabled(false);
-			
+
 			SwingUtilities.invokeLater(new Runnable()
 			{
 				@Override
@@ -1354,7 +1373,7 @@ public class DotsApplication implements ChatIF
 			}
 		}
 	}
-	
+
 	/**
 	 * Calls the <code>closeConnection()</code> method on <code>dotsGameClient</code>
 	 * if it is not null, then returns to the intro panel.
@@ -1370,12 +1389,12 @@ public class DotsApplication implements ChatIF
 		}
 		catch (IOException ex) {}
 		dotsGameClient = null;
-		
+
 		controlMessageCount = 0;
 		controlMessagesEnabled = true;
 		playerOne = playerTwo = playerTurn = gameInProgress = false;
 		playerOneName = playerTwoName = winnerOfLastGame = "";
-		
+
 		SwingUtilities.invokeLater(new Runnable()
 		{
 			@Override
@@ -1393,7 +1412,7 @@ public class DotsApplication implements ChatIF
 		});
 		displayErrorMessage("Connection lost!", "The server host kicked you and you have been returned to the title screen");
 	}
-	
+
 	/**
 	 * Clears the gamePanel and its objects then repaints it to be empty.
 	 */
@@ -1410,11 +1429,11 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Sets the state of <code>gamePanel</code> to match the parameters provided
 	 * then displays the game panel in the event dispatch thread.
-	 * 
+	 *
 	 * @param gridSize the size of game grid
 	 * @param gameSquareValues state values for the game squares
 	 */
@@ -1424,23 +1443,23 @@ public class DotsApplication implements ChatIF
 		{
 			@Override
 			public void run()
-			{	
+			{
 				if (!isServerHost())
 				{
 					gamePanel.setGridSize(gridSize, gameSquareValues);
 				}
-				
+
 				cardLayout.show(frame.getContentPane(), PANEL_GAME);
 				splitMessagesAndInput.setDividerLocation(0.7);
 				splitChatAndGame.setDividerLocation(0.7);
 			}
 		});
 	}
-	
+
 	/**
 	 * Displays a message box to the user using <code>title</code> and <code>message</code>.
 	 * If an exception was included, its stack trace is output to the console
-	 * 
+	 *
 	 * @param title title for the message box representing the error
 	 * @param message text for the message box describing the error
 	 * @param ex optional. Exception stack trace to print to the screen
@@ -1462,13 +1481,13 @@ public class DotsApplication implements ChatIF
 				}
 			}
 		});
-		
+
 	}
-	
+
 	/**
 	 * Enables or disables commands which should not be available
 	 * when the client is not connected.
-	 * 
+	 *
 	 * @param enable true to enable the commands
 	 */
 	private void setConnectedClientCommandsEnabled(boolean enable)
@@ -1478,10 +1497,10 @@ public class DotsApplication implements ChatIF
 			connectedClientMenuItems.get(ii).setEnabled(enable);
 		}
 	}
-	
+
 	/**
 	 * Enables or disables the server commands menu.
-	 * 
+	 *
 	 * @param enable true to enable the menu
 	 */
 	private void setServerCommandsEnabled(boolean enable)
@@ -1507,7 +1526,7 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Constructor. Creates the application frame, adds the panels
 	 * and displays the intro panel to the user.
@@ -1526,14 +1545,14 @@ public class DotsApplication implements ChatIF
 		frame.pack();
 		frame.setMinimumSize(new Dimension(500, 400));
 		frame.setLocationRelativeTo(null);
-		
+
 		setServerCommandsEnabled(false);
 		setConnectedClientCommandsEnabled(false);
-		
+
 		cardLayout.show(frame.getContentPane(), PANEL_INTRO);
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Sets the visibility of <code>howToDialog</code> to true. If <code>howToDialog</code>
 	 * is null, it is created. Takes place in the event dispatch thread.
@@ -1550,9 +1569,9 @@ public class DotsApplication implements ChatIF
 					howToDialog = new JDialog();
 					howToDialog.setTitle("How to Play");
 					howToDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-					
+
 					JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-					
+
 					JPanel howToJoinPanel = new JPanel();
 					howToJoinPanel.setLayout(new BoxLayout(howToJoinPanel, BoxLayout.Y_AXIS));
 					JLabel titleLabel = new JLabel("<html><center>Logging In<br></center></html>");
@@ -1585,7 +1604,7 @@ public class DotsApplication implements ChatIF
 					tabbedPanel.setPreferredSize(new Dimension(500, 300));
 					tabbedPanel.add(new JScrollPane(howToJoinPanel), BorderLayout.CENTER);
 					tabbedPane.add("Logging In", tabbedPanel);
-					
+
 					JPanel howToPlayPanel = new JPanel();
 					howToPlayPanel.setLayout(new BoxLayout(howToPlayPanel, BoxLayout.Y_AXIS));
 					titleLabel = new JLabel("<html><center>Playing the Game</center></html>");
@@ -1622,7 +1641,7 @@ public class DotsApplication implements ChatIF
 					tabbedPanel.setPreferredSize(new Dimension(500, 300));
 					tabbedPanel.add(new JScrollPane(howToPlayPanel), BorderLayout.CENTER);
 					tabbedPane.add("Playing the Game", tabbedPanel);
-					
+
 					JPanel otherPanel = new JPanel();
 					otherPanel.setLayout(new BoxLayout(otherPanel, BoxLayout.Y_AXIS));
 					titleLabel = new JLabel("<html><center>Other</center></html>");
@@ -1655,11 +1674,11 @@ public class DotsApplication implements ChatIF
 					tabbedPanel.setPreferredSize(new Dimension(500, 300));
 					tabbedPanel.add(new JScrollPane(otherPanel), BorderLayout.CENTER);
 					tabbedPane.add("Other", tabbedPanel);
-					
+
 					howToDialog.add(tabbedPane);
 					howToDialog.pack();
 				}
-				
+
 				if (!howToDialog.isVisible())
 				{
 					howToDialog.setLocationRelativeTo(frame);
@@ -1668,7 +1687,7 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Sets the visibility of <code>commandsDialog</code> to true. If <code>commandsDialog</code>
 	 * is null, it is created. Takes place in the event dispatch thread.
@@ -1686,7 +1705,7 @@ public class DotsApplication implements ChatIF
 					commandsDialog.setTitle("Available Commands");
 					commandsDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 					commandsDialog.setMinimumSize(new Dimension(100, 150));
-					
+
 					TableModel dataModel = new AbstractTableModel()
 					{
 						private static final long serialVersionUID = 1L;
@@ -1740,11 +1759,11 @@ public class DotsApplication implements ChatIF
 								case 16: return "Kicks the player with the ID <loginID> and bans them from returning";
 								}
 							}
-							
+
 							return "";
 						}
 					};
-					
+
 					JTable table = new JTable(dataModel);
 					table.getColumnModel().getColumn(0).setMaxWidth(150);
 					table.getColumnModel().getColumn(0).setMinWidth(150);
@@ -1753,7 +1772,7 @@ public class DotsApplication implements ChatIF
 					commandsDialog.add(new JScrollPane(table));
 					commandsDialog.pack();
 				}
-				
+
 				if (!commandsDialog.isVisible())
 				{
 					commandsDialog.setLocationRelativeTo(frame);
@@ -1762,7 +1781,7 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Sets the visibility of <code>aboutDialog</code> to true. If <code>aboutDialog</code>
 	 * is null, it is created. Takes place in the event dispatch thread.
@@ -1781,7 +1800,7 @@ public class DotsApplication implements ChatIF
 					aboutDialog.setTitle("About");
 					aboutDialog.setLayout(new BorderLayout());
 					aboutDialog.setResizable(false);
-					
+
 					JLabel aboutLabel = new JLabel("<html><center>About Dots<br><br>"
 													+ "Dots provides users with a fun gaming<br>"
 													+ "experience. Users can play a game of<br>"
@@ -1794,7 +1813,7 @@ public class DotsApplication implements ChatIF
 					aboutDialog.add(aboutLabel, BorderLayout.CENTER);
 					aboutDialog.pack();
 				}
-				
+
 				if (!aboutDialog.isVisible())
 				{
 					aboutDialog.setLocationRelativeTo(frame);
@@ -1803,7 +1822,7 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Sets the visibility of <code>usersDialog</code> to true. If <code>usersDialog</code>
 	 * is null, it is created. Takes place in the event dispatch thread.
@@ -1820,10 +1839,10 @@ public class DotsApplication implements ChatIF
 					usersDialog = new JDialog();
 					usersDialog.setTitle("Current Users");
 					usersDialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-					
+
 					DefaultListModel<String> usersModel = new DefaultListModel<String>();
 					usersModel.addElement("Waiting for list to populate...");
-					
+
 					usersList = new JList<String>(usersModel);
 					usersList.setCellRenderer(new DefaultListCellRenderer()
 					{
@@ -1841,10 +1860,10 @@ public class DotsApplication implements ChatIF
 					contentPanel.setLayout(new BorderLayout());
 					contentPanel.setPreferredSize(new Dimension(100,200));
 					contentPanel.add(new JScrollPane(usersList), BorderLayout.CENTER);
-					
+
 					usersDialog.add(contentPanel);
 					usersDialog.pack();
-					
+
 					usersDialog.addComponentListener(new ComponentAdapter(){
 						@Override
 						public void componentHidden(ComponentEvent e)
@@ -1855,7 +1874,7 @@ public class DotsApplication implements ChatIF
 						}
 					});
 				}
-				
+
 				if (!usersDialog.isVisible())
 				{
 					usersDialog.setLocationRelativeTo(frame);
@@ -1864,30 +1883,30 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * Returns the JFrame containing the application
-	 * 
+	 *
 	 * @return the value of <code>frame</code>
 	 */
 	public JFrame getFrame() {return frame;}
 	/**
 	 * Returns the GamePanel containing the current game state
-	 * 
+	 *
 	 * @return the value of <code>gamePanel</code>
 	 */
 	public GamePanel getGamePanel() {return gamePanel;}
 	/**
 	 * Returns true if strings should be printed to the console
 	 * for debugging, false otherwise.
-	 * 
+	 *
 	 * @return the current value of <code>printErrorsToConsole</code>
 	 */
 	public static boolean shouldPrintToConsole() {return printErrorsToConsole;}
-	
+
 	/**
 	 * Gets the login id of the user from the game client
-	 * 
+	 *
 	 * @return The login id of the user
 	 */
 	public String getLoginID()
@@ -1898,80 +1917,80 @@ public class DotsApplication implements ChatIF
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns true if the user is hosting a server, false otherwise.
-	 * 
-	 * @return true if <code>dotsGameServer</code> is not null (there is an instance 
+	 *
+	 * @return true if <code>dotsGameServer</code> is not null (there is an instance
 	 * of the server), false otherwise.
 	 */
 	public boolean isServerHost()
 	{
 		return dotsGameServer != null;
 	}
-	
+
 	/**
 	 * Returns the username of the user who won the last game
-	 * 
+	 *
 	 * @return the value of <code>winnerOfLastGame</code>
 	 */
 	public String getWinnerOfLastGame() {return winnerOfLastGame;}
-	
+
 	/**
 	 * Returns true if the user is a player in the current game, false otherwise.
-	 * 
+	 *
 	 * @return true if <code>playerOne</code> or <code>playerTwo</code> is true, false otherwise.
 	 */
 	public boolean isPlayer() {return playerOne || playerTwo;}
 	/**
 	 * Indicates whether the user is player one
-	 * 
+	 *
 	 * @return the value of <code>playerOne</code>
 	 */
 	public boolean isPlayerOne() {return playerOne;}
 	/**
 	 * Indicates whether the user is player two.
-	 * 
+	 *
 	 * @return the value of <code>playerTwo</code>
 	 */
 	public boolean isPlayerTwo() {return playerTwo;}
-	
+
 	/**
 	 * Indicates whether it is the user's turn in the game.
 	 * @return the value of <code>playerTurn</code>
 	 */
 	public boolean isPlayerTurn() {return playerTurn;}
-	
+
 	/**
 	 * Sets <code>playerTurn</code> to false
 	 */
 	public void disablePlayerTurn() {playerTurn = false;}
-	
+
 	/**
 	 * Indicates whether a game is currently in progress
-	 * 
+	 *
 	 * @return the value of <code>gameInProgress</code>
 	 */
 	public boolean isGameInProgress() {return gameInProgress;}
-	
+
 	/**
 	 * Returns the username of player one
-	 * 
+	 *
 	 * @return the value of <code>playerOneName</code>
 	 */
 	public String getPlayerOneName() {return playerOneName;}
-	
+
 	/**
 	 * Returns the username of player two
-	 * 
+	 *
 	 * @return the value of <code>playerTwoName</code>
 	 */
 	public String getPlayerTwoName() {return playerTwoName;}
-	
+
 	/**
 	 * Singleton method. Returns an instance of DotsApplication.
 	 * If one does not exist, it is created.
-	 * 
+	 *
 	 * @return the value of <code>instance</code>
 	 */
 	public static DotsApplication getInstance()
@@ -1982,7 +2001,7 @@ public class DotsApplication implements ChatIF
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * When the program closes, a short method will be run
 	 * which will disconnect all the clients if the user
@@ -2006,7 +2025,7 @@ public class DotsApplication implements ChatIF
 	/**
 	 * Main method. Creates an instance of DotsApplication in the AWT
 	 * event dispatch thread.
-	 * 
+	 *
 	 * @param args not used
 	 */
 	public static void main(String[] args)
@@ -2017,7 +2036,7 @@ public class DotsApplication implements ChatIF
 		 * appearing wrong on some Windows machines.
 		 * We found changing these properties as a
 		 * suggested solution.
-		 * 
+		 *
 		 * Source:
 		 * http://stackoverflow.com/questions/8081559/is-this-a-swing-java-7-rendering-bug
 		 * http://stackoverflow.com/questions/870472/corrupted-java-swing-window
@@ -2025,8 +2044,8 @@ public class DotsApplication implements ChatIF
 		System.setProperty("sun.java2d.d3d", "false");
 		System.setProperty("sun.java2d.ddoffscreen", "false");
 		System.setProperty("sun.java2d.noddraw", "false");
-		
-		
+
+
 		addShutdownHook();
 		SwingUtilities.invokeLater(new Runnable()
 		{
@@ -2037,10 +2056,10 @@ public class DotsApplication implements ChatIF
 			}
 		});
 	}
-	
+
 	/**
 	 * ActionListener to respond to events from the menu bar.
-	 * 
+	 *
 	 * @author Joseph Roque
 	 * @author Matthew Larrivee
 	 *
@@ -2095,7 +2114,7 @@ public class DotsApplication implements ChatIF
 				helpCommand(event.getActionCommand().substring(6));
 			}
 		}
-		
+
 		/**
 		 * Parses  "File" menu events
 		 * @param command the action command from the menu which was activated
@@ -2123,7 +2142,7 @@ public class DotsApplication implements ChatIF
 				}
 			}
 		}
-		
+
 		/**
 		 * Parses  "Game" menu events
 		 * @param command the action command from the menu which was activated
@@ -2132,7 +2151,7 @@ public class DotsApplication implements ChatIF
 		{
 			DotsApplication.getInstance().sendMessageToClient(command);
 		}
-		
+
 		/**
 		 * Parses  "Get Info" menu events
 		 * @param command the action command from the menu which was activated
@@ -2158,13 +2177,13 @@ public class DotsApplication implements ChatIF
 					title = "All Stats";
 				else
 					return;
-				
+
 				String userID = JOptionPane.showInputDialog(DotsApplication.getInstance().getFrame(), "Please enter the name of the user who you wish you get this information on.", title, JOptionPane.QUESTION_MESSAGE);
 				if (userID == null || userID.length() == 0)
 				{
 					return;
 				}
-				
+
 				DotsApplication.getInstance().sendMessageToClient(command + " " + userID);
 			}
 			else
@@ -2172,7 +2191,7 @@ public class DotsApplication implements ChatIF
 				DotsApplication.getInstance().sendMessageToClient(command);
 			}
 		}
-		
+
 		/**
 		 * Parses  "Server Commands" menu events
 		 * @param command the action command from the menu which was activated
@@ -2186,7 +2205,7 @@ public class DotsApplication implements ChatIF
 				{
 					return;
 				}
-				
+
 				int response = JOptionPane.showConfirmDialog(DotsApplication.getInstance().getFrame(), "Are you SURE you wish to do this? The player will not be able to rejoin the server.", "Kick Player?", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (response == JOptionPane.OK_OPTION)
 				{
@@ -2198,7 +2217,7 @@ public class DotsApplication implements ChatIF
 				DotsApplication.getInstance().sendMessageToClient(command);
 			}
 		}
-		
+
 		/**
 		 * Parses  "Help" menu events
 		 * @param command the action command from the menu which was activated

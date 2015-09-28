@@ -1,11 +1,6 @@
-/*
- * Joseph Roque, 7284039
- * Matthew Larrivee, 6657183
- */
-
 // This file contains material supporting section 3.7 of the textbook:
 // "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
+// license found at http://www.site.uottawa.ca/school/research/lloseng/supportMaterial/source/openSourceLicense.html
 
 package roquelarrivee.dots;
 
@@ -17,7 +12,7 @@ package roquelarrivee.dots;
  * @author Dr Timothy C. Lethbridge
  * @version July 2000
  */
-public interface ChatIF 
+public interface ChatIF
 {
   /**
    * Method that when overriden is used to display objects onto
