@@ -38,7 +38,7 @@ import java.util.*;
 * <li> A test is made before calling the
 * <code>handleMessageFromServer</code> method such that
 * when  <code>closeConnection</code> returns, it
-* is garanteed that no new messages will be handled.
+* is guaranteed that no new messages will be handled.
 * </ul>
 * The modifications made to this class in version 2.31 are:
 * <ul>
