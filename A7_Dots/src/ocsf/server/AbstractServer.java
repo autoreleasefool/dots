@@ -37,7 +37,7 @@ import java.io.*;
 * </ul>
 * The modifications made to this class in version 2.3 are:
 * <ul>
-* <li> An instance variable refering to the current connection
+* <li> An instance variable referring to the current connection
 * factory. Refer to null value by default, in this case regular
 * <code>ConnectionToClient</code> instances are created as in the
 * previous versions. 

@@ -16,7 +16,7 @@ import java.net.*;
  * @author Dr Robert Lagani&egrave;re
  * @author Dr Timothy C. Lethbridge
  * @author Fran&ccedil;ois B&eacute;lange
- * @version Febuary 2001
+ * @version February 2001
  */
 public class ObservableClient extends Observable
 {

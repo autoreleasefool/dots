@@ -20,7 +20,7 @@ Written in Java, in Eclipse. Repository contains Eclipse project.
 *Playing a game*
 
 <img src="Screenshots/screen_commands.png" alt="Available commands" width="227" height="221" /><br />
-*Commands availabe to users*
+*Commands available to users*
 
 ## License
 
